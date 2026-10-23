@@ -5,19 +5,41 @@ import express, {
 } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import { connectDB } from "./config/db";
 import { authRouter } from "./routes/auth";
+import { categoryRouter } from "./routes/categories";
+import { claimRouter } from "./routes/claims";
+import { itemRouter } from "./routes/items";
 import { resourceRouter } from "./routes/resources";
+import { userRouter } from "./routes/users";
 
 export const app = express();
 
-app.use(cors());
+const allowedOrigins = (
+  process.env.CORS_ORIGIN ??
+  (process.env.NODE_ENV === "production" ? "" : "http://localhost:5173")
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
+
+app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+  await connectDB();
+  next();
+});
 
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 });
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/users", userRouter);
+app.use("/api/items", itemRouter);
+app.use("/api/claims", claimRouter);
 app.use("/api/resources", resourceRouter);
 
 app.use((req: Request, res: Response) => {
@@ -47,3 +69,5 @@ app.use(
     res.status(500).json({ message: "Something went wrong" });
   }
 );
+
+export default app;

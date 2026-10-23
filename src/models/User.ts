@@ -14,7 +14,7 @@ const userSchema = new Schema<UserDoc>(
     },
     role: {
       type: String,
-      enum: ["student", "admin", "instructor"],
+      enum: ["student", "security_admin"],
       default: "student",
     },
     isActive: { type: Boolean, default: true },
