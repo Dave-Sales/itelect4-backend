@@ -6,6 +6,7 @@ import express, {
 import cors from "cors";
 import mongoose from "mongoose";
 import { connectDB } from "./config/db";
+import { aiRouter } from "./routes/ai";
 import { authRouter } from "./routes/auth";
 import { categoryRouter } from "./routes/categories";
 import { claimRouter } from "./routes/claims";
@@ -36,6 +37,7 @@ app.get("/api/health", (_req: Request, res: Response) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/ai", aiRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/users", userRouter);
 app.use("/api/items", itemRouter);
