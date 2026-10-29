@@ -17,6 +17,14 @@ interface LoginBody {
   password: string;
 }
 
+function jwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is missing.");
+  }
+  return secret;
+}
+
 authRouter.post(
   "/register",
   async (
@@ -24,16 +32,25 @@ authRouter.post(
     res: Response
   ) => {
     const { name, email, password } = req.body;
+    const normalizedEmail = email.trim().toLowerCase();
+    const secret = jwtSecret();
 
-    if (await User.findOne({ email })) {
+    if (await User.findOne({ email: normalizedEmail })) {
       res.status(409).json({
         message: "That email is already registered",
       });
       return;
     }
 
-    const user = await User.create({ name, email, password });
-    res.status(201).json(user.toJSON());
+    const user = await User.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password,
+    });
+    const payload: TokenPayload = { userId: String(user._id) };
+    const token = jwt.sign(payload, secret, { expiresIn: "2h" });
+
+    res.status(201).json({ token, user: user.toJSON() });
   }
 );
 
@@ -44,8 +61,11 @@ authRouter.post(
     res: Response
   ) => {
     const { email, password } = req.body;
+    const secret = jwtSecret();
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email: email.trim().toLowerCase() }).select(
+      "+password"
+    );
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       res.status(401).json({
@@ -55,9 +75,7 @@ authRouter.post(
     }
 
     const payload: TokenPayload = { userId: String(user._id) };
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn: "2h",
-    });
+    const token = jwt.sign(payload, secret, { expiresIn: "2h" });
 
     res.json({ token, user: user.toJSON() });
   }
