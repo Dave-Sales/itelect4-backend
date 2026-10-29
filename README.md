@@ -13,7 +13,7 @@ Run `npm run try-ai` to make a direct Gemini review request without Express. The
 
 ## Vercel
 
-Import this repository with its root directory set to the backend repository root. Vercel serves the default Express export from `src/app.ts`; no `PORT` setting is needed. Set `MONGODB_URI`, `JWT_SECRET`, `CORS_ORIGIN`, and `GEMINI_API_KEY` in the Vercel project's environments, then deploy. After deployment, run `npm run seed` against the configured Atlas database and verify `/api/health` returns `{"ok":true,"db":true}`.
+Import this repository with its root directory set to the backend repository root. Vercel routes requests through the explicit handler in `api/index.ts`; no `PORT` setting is needed. Set `MONGODB_URI`, `JWT_SECRET`, `CORS_ORIGIN`, and `GEMINI_API_KEY` in the Vercel project's environments, then deploy. After deployment, run `npm run seed` against the configured Atlas database and verify `/api/health` returns `{"ok":true,"db":true}`.
 
 After the frontend has a Vercel URL, set that exact origin as `CORS_ORIGIN` and redeploy the backend. Keep secrets in the hosting provider's environment settings, not in Git.
 
