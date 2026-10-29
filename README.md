@@ -1,5 +1,7 @@
 # Campus Lost & Found API
 
+[![CI](https://github.com/Dave-Sales/itelect4-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/Dave-Sales/itelect4-backend/actions/workflows/ci.yml)
+
 ## Local development
 
 1. Copy `.env.example` to `.env`.

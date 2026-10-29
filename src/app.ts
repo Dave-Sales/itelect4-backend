@@ -18,7 +18,9 @@ export const app = express();
 
 const allowedOrigins = (
   process.env.CORS_ORIGIN ??
-  (process.env.NODE_ENV === "production" ? "" : "http://localhost:5173")
+  (process.env.NODE_ENV === "production"
+    ? "https://itelect4-project-black.vercel.app"
+    : "http://localhost:5173")
 )
   .split(",")
   .map((origin) => origin.trim())
